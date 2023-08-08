@@ -1,15 +1,27 @@
 import * as core from '@actions/core';
+import { execSync } from 'child_process';
+import semanticRelease, { Result } from 'semantic-release';
 
-async function run(): Promise<void> {
-    try {
-      const name: string = core.getInput('name')
-      
-      core.debug(`Hello ${name}!`)
+async function dryRunRelease(): Promise<Result> {
+  execSync(`git checkout ${process.env.GITHUB_HEAD_REF}`)
+  return semanticRelease({
+    plugins: [
+      '@semantic-release/git'
+    ],
+    dryRun: true,
+    ci: false
+  });
+}
 
-      core.setOutput('time', new Date().toTimeString())
-    } catch (error) {
-      if (error instanceof Error) core.setFailed(error.message)
-    }
+async function run() {
+  const result = await dryRunRelease();
+  if (result) {
+    core.setOutput('version', result.nextRelease.version);
   }
-  
-  run()
+}
+
+run();
+
+
+
+
