@@ -9,6 +9,4 @@ inputs:
     required: true
 outputs:
   version:
-    description: 'The version released, if any.
-    
-    
+    description: 'The version released, if any.'

@@ -5,9 +5,6 @@ import semanticRelease, { Result } from 'semantic-release';
 async function dryRunRelease(): Promise<Result> {
   execSync(`git checkout ${process.env.GITHUB_HEAD_REF}`)
   return semanticRelease({
-    plugins: [
-      '@semantic-release/git'
-    ],
     dryRun: true,
     ci: false
   });

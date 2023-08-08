@@ -49,15 +49,11 @@ function dryRunRelease() {
     return __awaiter(this, void 0, void 0, function* () {
         (0, child_process_1.execSync)(`git checkout ${process.env.GITHUB_HEAD_REF}`);
         return (0, semantic_release_1.default)({
-            plugins: [
-                '@semantic-release/git'
-            ],
             dryRun: true,
             ci: false
         });
     });
 }
-// run dry run release and export version as output 
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         const result = yield dryRunRelease();
