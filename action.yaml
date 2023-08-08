@@ -4,9 +4,14 @@ runs:
   using: 'node16'
   main: 'dist/index.js'
 inputs:
-  GITHUB_TOKEN:
-    description: 'GitHub token'
-    required: true
+  name:
+    description: 'Name to greet'
+    required: false
+    default: 'World'
+  
+  # github-token:
+  #   description: 'GitHub token'
+  #   required: true
 outputs:
   version:
     description: 'The version released, if any.'
