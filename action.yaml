@@ -4,19 +4,11 @@ runs:
   using: 'node16'
   main: 'dist/index.js'
 inputs:
-  name:
-    description: 'Name to greet'
-    required: false
-    default: 'World'
-  
-  # github-token:
-  #   description: 'GitHub token'
-  #   required: true
-# outputs:
-#   version:
-#     description: 'The version released, if any.'
+  github-token:
+    description: 'GitHub token'
+    required: true
 outputs:
-  time:
-    description: 'The time we greeted you.'
+  version:
+    description: 'The version released, if any.
     
     
