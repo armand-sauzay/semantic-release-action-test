@@ -12,6 +12,11 @@ inputs:
   # github-token:
   #   description: 'GitHub token'
   #   required: true
+# outputs:
+#   version:
+#     description: 'The version released, if any.'
 outputs:
-  version:
-    description: 'The version released, if any.'
+  time:
+    description: 'The time we greeted you.'
+    
+    
