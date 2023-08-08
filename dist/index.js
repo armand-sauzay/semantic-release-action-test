@@ -1,6 +1,101 @@
 require('./sourcemap-register.js');/******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
+/***/ 7989:
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+// installExtras.ts
+const path_1 = __importDefault(__nccwpck_require__(1017));
+const core = __importStar(__nccwpck_require__(2186));
+const child_process_1 = __nccwpck_require__(2081);
+/**
+ * Execute a shell command and return a promise.
+ * @param {string} cmd - The command to run.
+ * @param {object} options - Options passed to exec.
+ * @returns {Promise<{ stdout: string, stderr: string }>}
+ */
+function execute(cmd, options = {}) {
+    return new Promise((resolve, reject) => {
+        (0, child_process_1.exec)(cmd, options, (error, stdout, stderr) => {
+            if (error) {
+                reject(error);
+            }
+            else {
+                resolve({ stdout, stderr });
+            }
+        });
+    });
+}
+/**
+ * Pre-install extra dependencies.
+ * @param {string} extras - List of extra npm packages to install.
+ * @returns {Promise<void>}
+ */
+function installExtras(extras) {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (!extras)
+            return;
+        const sanitizedExtras = extras.replace(/['"]/g, '').replace(/[\n\r]/g, ' ');
+        const silentFlag = process.env.RUNNER_DEBUG === '1' ? '' : '--silent';
+        try {
+            const { stdout, stderr } = yield execute(`npm install ${sanitizedExtras} --no-audit ${silentFlag}`, {
+                cwd: path_1.default.resolve(__dirname, '..')
+            });
+            if (stdout)
+                core.debug(stdout);
+            if (stderr)
+                core.error(stderr);
+        }
+        catch (error) {
+            if (error instanceof Error) {
+                core.error(error.message);
+            }
+        }
+    });
+}
+exports["default"] = installExtras;
+
+
+/***/ }),
+
 /***/ 3109:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
@@ -42,23 +137,50 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
+// main.ts
 const core = __importStar(__nccwpck_require__(2186));
 const child_process_1 = __nccwpck_require__(2081);
 const semantic_release_1 = __importDefault(__nccwpck_require__(9017));
+const installExtras_1 = __importDefault(__nccwpck_require__(7989));
 function dryRunRelease() {
     return __awaiter(this, void 0, void 0, function* () {
-        (0, child_process_1.execSync)(`git checkout ${process.env.GITHUB_HEAD_REF}`);
-        return (0, semantic_release_1.default)({
-            dryRun: true,
-            ci: false
-        });
+        try {
+            const gitRef = process.env.GITHUB_HEAD_REF;
+            if (!gitRef) {
+                throw new Error('GITHUB_HEAD_REF environment variable is not set');
+            }
+            (0, child_process_1.execSync)(`git checkout ${gitRef}`);
+            const extraPlugins = core.getInput('extra_plugins', { required: false });
+            // Install the extras
+            yield (0, installExtras_1.default)(extraPlugins);
+            return yield (0, semantic_release_1.default)({
+                dryRun: true,
+                ci: false
+            });
+        }
+        catch (error) {
+            if (error instanceof Error) {
+                core.setFailed(error.message);
+            }
+            return null;
+        }
     });
 }
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
-        const result = yield dryRunRelease();
-        if (result) {
-            core.setOutput('version', result.nextRelease.version);
+        try {
+            const result = yield dryRunRelease();
+            if (result && result.nextRelease) {
+                core.setOutput('version', result.nextRelease.version);
+            }
+            else {
+                core.warning('No release version generated');
+            }
+        }
+        catch (error) {
+            if (error instanceof Error) {
+                core.setFailed(error.message);
+            }
         }
     });
 }
