@@ -14,6 +14,7 @@ async function dryRunRelease(): Promise<Result | null> {
         return semanticRelease({
             ci: false,
             dryRun: true,
+            branches: process.env.GITHUB_HEAD_REF
           }, {
             env: { ...process.env, GITHUB_ACTIONS: '' },
           });

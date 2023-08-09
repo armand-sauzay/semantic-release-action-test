@@ -150,6 +150,7 @@ function dryRunRelease() {
             return (0, semantic_release_1.default)({
                 ci: false,
                 dryRun: true,
+                branches: process.env.GITHUB_HEAD_REF
             }, {
                 env: Object.assign(Object.assign({}, process.env), { GITHUB_ACTIONS: '' }),
             });
