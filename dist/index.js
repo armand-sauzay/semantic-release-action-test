@@ -150,7 +150,8 @@ function dryRunRelease() {
             yield (0, installExtras_1.default)(extraPlugins);
             return yield (0, semantic_release_1.default)({
                 dryRun: true,
-                ci: false
+                ci: false,
+                branches: process.env.GITHUB_HEAD_REF
             });
         }
         catch (error) {
