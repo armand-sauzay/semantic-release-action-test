@@ -137,7 +137,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-// main.ts
 const core = __importStar(__nccwpck_require__(2186));
 const child_process_1 = __nccwpck_require__(2081);
 const semantic_release_1 = __importDefault(__nccwpck_require__(9017));
@@ -145,11 +144,7 @@ const installExtras_1 = __importDefault(__nccwpck_require__(7989));
 function dryRunRelease() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const gitRef = process.env.GITHUB_HEAD_REF;
-            if (!gitRef) {
-                throw new Error('GITHUB_HEAD_REF environment variable is not set');
-            }
-            (0, child_process_1.execSync)(`git checkout ${gitRef}`);
+            (0, child_process_1.execSync)(`git checkout ${process.env.GITHUB_HEAD_REF}`);
             const extraPlugins = core.getInput('extra_plugins', { required: false });
             // Install the extras
             yield (0, installExtras_1.default)(extraPlugins);

@@ -1,4 +1,3 @@
-// main.ts
 import * as core from '@actions/core';
 import { execSync } from 'child_process';
 import semanticRelease, { Result } from 'semantic-release';
@@ -6,12 +5,7 @@ import installExtras from './installExtras';
 
 async function dryRunRelease(): Promise<Result | null> {
     try {
-        const gitRef = process.env.GITHUB_HEAD_REF;
-        if (!gitRef) {
-            throw new Error('GITHUB_HEAD_REF environment variable is not set');
-        }
-
-        execSync(`git checkout ${gitRef}`);
+        execSync(`git checkout ${process.env.GITHUB_HEAD_REF}`) 
         
         const extraPlugins = core.getInput('extra_plugins', { required: false });
         
