@@ -142,15 +142,19 @@ const child_process_1 = __nccwpck_require__(2081);
 const semantic_release_1 = __importDefault(__nccwpck_require__(9017));
 const installExtras_1 = __importDefault(__nccwpck_require__(7989));
 function dryRunRelease() {
+    var _a;
     return __awaiter(this, void 0, void 0, function* () {
         try {
             (0, child_process_1.execSync)(`git checkout ${process.env.GITHUB_HEAD_REF}`);
             const extraPlugins = core.getInput('extra_plugins', { required: false });
             yield (0, installExtras_1.default)(extraPlugins);
+            const branch = process.env.GITHUB_HEAD_REF || ((_a = process.env.GITHUB_REF) !== null && _a !== void 0 ? _a : '').replace('refs/heads/', '');
             return (0, semantic_release_1.default)({
                 ci: false,
                 dryRun: true,
-                branches: process.env.GITHUB_HEAD_REF
+                branches: [
+                    branch
+                ],
             }, {
                 env: Object.assign(Object.assign({}, process.env), { GITHUB_ACTIONS: '' }),
             });

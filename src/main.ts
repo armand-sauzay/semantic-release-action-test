@@ -11,10 +11,14 @@ async function dryRunRelease(): Promise<Result | null> {
         
         await installExtras(extraPlugins);
 
+        const branch = process.env.GITHUB_HEAD_REF || (process.env.GITHUB_REF ?? '').replace('refs/heads/', '');
+
         return semanticRelease({
             ci: false,
             dryRun: true,
-            branches: process.env.GITHUB_HEAD_REF
+            branches: [
+                branch
+            ],
           }, {
             env: { ...process.env, GITHUB_ACTIONS: '' },
           });
