@@ -9,15 +9,14 @@ async function dryRunRelease(): Promise<Result | null> {
         
         const extraPlugins = core.getInput('extra_plugins', { required: false });
         
-        // Install the extras
         await installExtras(extraPlugins);
 
-        return await semanticRelease({
-            dryRun: true,
+        return semanticRelease({
             ci: false,
-        }, {
-            env: { ...process.env, GITHUB_ACTION: '' },
-        });
+            dryRun: true,
+          }, {
+            env: { ...process.env, GITHUB_ACTIONS: '' },
+          });
     } catch (error) {
         if (error instanceof Error) {
             core.setFailed(error.message);

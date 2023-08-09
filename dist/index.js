@@ -146,13 +146,12 @@ function dryRunRelease() {
         try {
             (0, child_process_1.execSync)(`git checkout ${process.env.GITHUB_HEAD_REF}`);
             const extraPlugins = core.getInput('extra_plugins', { required: false });
-            // Install the extras
             yield (0, installExtras_1.default)(extraPlugins);
-            return yield (0, semantic_release_1.default)({
-                dryRun: true,
+            return (0, semantic_release_1.default)({
                 ci: false,
+                dryRun: true,
             }, {
-                env: Object.assign(Object.assign({}, process.env), { GITHUB_ACTION: '' }),
+                env: Object.assign(Object.assign({}, process.env), { GITHUB_ACTIONS: '' }),
             });
         }
         catch (error) {
