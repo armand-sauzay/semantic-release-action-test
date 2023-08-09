@@ -4,6 +4,9 @@ runs:
   using: 'node16'
   main: 'dist/index.js'
 inputs:
+  extra_plugins:
+    description: 'Extra plugins to load'
+    required: false
   github-token:
     description: 'GitHub token'
     required: true
