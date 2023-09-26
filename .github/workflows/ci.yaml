@@ -1,0 +1,15 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  pre-release:
+    name: Pre release
+    runs-on: ubuntu-latest
+    steps:
+        #uses the action at the root of the repo
+        - name: Semantic release
+          uses: ./
